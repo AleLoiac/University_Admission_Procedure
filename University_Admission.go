@@ -14,7 +14,10 @@ func meanValue(e1, e2, e3 int) float64 {
 
 func main() {
 
-	fmt.Scan(&exam1, &exam2, &exam3)
+	_, err := fmt.Scan(&exam1, &exam2, &exam3)
+	if err != nil {
+		return
+	}
 	fmt.Println(meanValue(exam1, exam2, exam3))
 
 	fmt.Println("Congratulations, you are accepted!")
