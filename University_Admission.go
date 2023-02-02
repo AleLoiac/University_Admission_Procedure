@@ -1,23 +1,37 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"log"
+	"os"
 	"sort"
+	"strconv"
+	"strings"
 )
 
-var studentsNumber int
 var acceptedNumber int
 
+var Students []Student
+
+var Mathematics []Student
+
 type Student struct {
-	firstName string
-	lastname  string
-	GPA       float64
+	firstName    string
+	lastname     string
+	GPA          float64
+	firstChoice  string
+	secondChoice string
+	thirdChoice  string
 }
 
-func newStudent(firstname string, lastname string, gpa float64) Student {
+func newStudent(firstname string, lastname string, gpa float64, first string, second string, third string) Student {
 	s := Student{firstName: firstname}
 	s.lastname = lastname
 	s.GPA = gpa
+	s.firstChoice = first
+	s.secondChoice = second
+	s.thirdChoice = third
 	return s
 }
 
@@ -33,28 +47,37 @@ func sortStudents(students []Student) {
 }
 
 func main() {
-	_, err := fmt.Scan(&studentsNumber, &acceptedNumber)
-	if err != nil {
+
+	_, err2 := fmt.Scan(&acceptedNumber)
+	if err2 != nil {
 		return
 	}
 
-	Students := make([]Student, 0)
+	file, err := os.Open("applicant_list.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
 
-	for i := 0; i < studentsNumber; i++ {
-		var firstname, lastname string
-		var gpa float64
-		_, err2 := fmt.Scan(&firstname, &lastname, &gpa)
-		if err2 != nil {
-			return
-		}
-		Students = append(Students, newStudent(firstname, lastname, gpa))
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	for scanner.Scan() {
+
+		field := strings.Split(scanner.Text(), " ")
+
+		var s Student
+
+		s.firstName = field[0]
+		s.lastname = field[1]
+		s.GPA, err = strconv.ParseFloat(field[2], 64)
+		s.firstChoice = field[3]
+		s.secondChoice = field[4]
+		s.thirdChoice = field[5]
+
+		//fmt.Scan(fields[1], &s.lastname)
+		//fmt.Scan(fields[2], &s.GPA)
+		Students = append(Students, s)
 	}
 
 	sortStudents(Students)
-
-	fmt.Println("Successful applicants:")
-	for i := 0; i < acceptedNumber; i++ {
-		fmt.Println(Students[i].firstName, Students[i].lastname)
-	}
-
 }
