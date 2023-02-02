@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 )
 
 var studentsNumber int
@@ -26,21 +27,31 @@ func meanValue(e1, e2, e3 int) float64 {
 	return mean
 }
 
-func newStudent(name string, gpa float64) *Student {
+func newStudent(name string, gpa float64) Student {
 	s := Student{fullName: name}
 	s.GPA = gpa
-	return &s
+	return s
 }
 
 func main() {
 	fmt.Scan(&studentsNumber)
 	fmt.Scan(&acceptedNumber)
 
+	Students := make([]Student, studentsNumber)
+
 	for i := 0; i < studentsNumber; i++ {
 		var name string
 		var gpa float64
 		fmt.Scan(&name, &gpa)
-		newStudent(name, gpa)
+		Students = append(Students, newStudent(name, gpa))
 	}
+
+	sort.Slice(Students, func(i, j int) bool {
+		if Students[i].GPA != Students[j].GPA {
+			return Students[i].GPA < Students[j].GPA
+		}
+		return Students[i].fullName < Students[j].fullName
+	})
+	fmt.Println(Students)
 
 }
