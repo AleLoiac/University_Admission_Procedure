@@ -34,24 +34,33 @@ func newStudent(name string, gpa float64) Student {
 }
 
 func main() {
-	fmt.Scan(&studentsNumber)
-	fmt.Scan(&acceptedNumber)
+	_, err := fmt.Scan(&studentsNumber, &acceptedNumber)
+	if err != nil {
+		return
+	}
 
-	Students := make([]Student, studentsNumber)
+	Students := make([]Student, 0)
 
 	for i := 0; i < studentsNumber; i++ {
 		var name string
 		var gpa float64
-		fmt.Scan(&name, &gpa)
+		_, err2 := fmt.Scan(&name, &gpa)
+		if err2 != nil {
+			return
+		}
 		Students = append(Students, newStudent(name, gpa))
 	}
 
 	sort.Slice(Students, func(i, j int) bool {
 		if Students[i].GPA != Students[j].GPA {
-			return Students[i].GPA < Students[j].GPA
+			return Students[i].GPA > Students[j].GPA
 		}
-		return Students[i].fullName < Students[j].fullName
+		return Students[i].fullName > Students[j].fullName
 	})
-	fmt.Println(Students)
+
+	fmt.Println("Successful applicants:")
+	for i := 0; i < acceptedNumber; i++ {
+		fmt.Print(Students[i].fullName, " ")
+	}
 
 }
