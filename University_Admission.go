@@ -26,6 +26,21 @@ func meanValue(e1, e2, e3 int) float64 {
 	return mean
 }
 
+func newStudent(name string, gpa float64) *Student {
+	s := Student{fullName: name}
+	s.GPA = gpa
+	return &s
+}
+
 func main() {
+	fmt.Scan(&studentsNumber)
+	fmt.Scan(&acceptedNumber)
+
+	for i := 0; i < studentsNumber; i++ {
+		var name string
+		var gpa float64
+		fmt.Scan(&name, &gpa)
+		newStudent(name, gpa)
+	}
 
 }
