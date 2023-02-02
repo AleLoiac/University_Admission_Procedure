@@ -4,8 +4,13 @@ import (
 	"fmt"
 )
 
-var exam1, exam2, exam3 int
-var score float64
+var studentsNumber int
+var acceptedNumber int
+
+type Student struct {
+	fullName string
+	GPA      float64
+}
 
 func isAccepted(meanScore float64) {
 	if meanScore >= 60.0 {
@@ -22,16 +27,5 @@ func meanValue(e1, e2, e3 int) float64 {
 }
 
 func main() {
-
-	_, err := fmt.Scan(&exam1, &exam2, &exam3)
-	if err != nil {
-		return
-	}
-
-	score = meanValue(exam1, exam2, exam3)
-
-	fmt.Println(score)
-
-	isAccepted(score)
 
 }
