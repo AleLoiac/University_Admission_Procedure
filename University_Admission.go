@@ -80,4 +80,20 @@ func main() {
 	}
 
 	sortStudents(Students)
+
+	Mathematics = make([]Student, 0)
+
+	count := 0
+	for i, v := range Students {
+		if count == acceptedNumber {
+			break
+		} else if v.firstChoice == "Mathematics" {
+			Mathematics = append(Mathematics, v)
+			Students = append(Students[:i], Students[i+1:]...) //removes the student from the Students slice
+			count++
+		}
+	}
+	fmt.Println(Mathematics)
+	fmt.Println()
+	fmt.Println(Students)
 }
