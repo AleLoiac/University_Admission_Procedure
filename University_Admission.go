@@ -27,6 +27,7 @@ type Student struct {
 	firstChoice  string
 	secondChoice string
 	thirdChoice  string
+	assigned     bool
 }
 
 func fileToSlice(file *os.File) {
@@ -54,19 +55,6 @@ func fileToSlice(file *os.File) {
 	}
 }
 
-func populateDep(department []Student, name string) {
-	count := 0
-	for i, v := range Students {
-		if count == acceptedNumber {
-			break
-		} else if v.firstChoice == name {
-			department = append(department, v)
-			Students = append(Students[:i], Students[i+1:]...) //removes the student from the Students slice
-			count++
-		}
-	}
-}
-
 func sortStudents(students []Student) {
 	sort.Slice(students, func(i, j int) bool {
 		if students[i].GPA != students[j].GPA {
@@ -76,6 +64,20 @@ func sortStudents(students []Student) {
 		}
 		return students[i].lastname < students[j].lastname
 	})
+}
+
+func populateDep(department *[]Student, name string) {
+	count := 0
+	for i, v := range Students {
+		if count == acceptedNumber {
+			break
+		} else if v.firstChoice == name && v.assigned != true {
+			v.assigned = true
+			Students[i].assigned = true
+			*department = append(*department, v)
+			count++
+		}
+	}
 }
 
 func main() {
@@ -96,30 +98,17 @@ func main() {
 	sortStudents(Students)
 
 	Mathematics = make([]Student, 0)
+	populateDep(&Mathematics, "Mathematics")
+	Physics = make([]Student, 0)
+	populateDep(&Physics, "Physics")
+	Biotech = make([]Student, 0)
+	populateDep(&Biotech, "Biotech")
+	Chemistry = make([]Student, 0)
+	populateDep(&Chemistry, "Chemistry")
+	Engineering = make([]Student, 0)
+	populateDep(&Engineering, "Engineering")
 
-	//count := 0
-	//for i, v := range Students {
-	//	if count == acceptedNumber {
-	//		break
-	//	} else if v.firstChoice == "Mathematics" {
-	//		Mathematics = append(Mathematics, v)
-	//		Students = append(Students[:i], Students[i+1:]...) //removes the student from the Students slice
-	//		count++
-	//	}
-	//}
-
-	populateDep(Mathematics, "Mathematics")
-	//Physics = make([]Student, 0)
-	//populateDep(Physics)
-	//Biotech = make([]Student, 0)
-	//populateDep(Biotech)
-	//Chemistry = make([]Student, 0)
-	//populateDep(Chemistry)
-	//Engineering = make([]Student, 0)
-	//populateDep(Engineering)
-
-	//fmt.Println("Mat:\n", Mathematics, "Phy:\n", Physics, "Bio:\n", Biotech, "Che:\n", Chemistry, "Eng:\n", Engineering)
-	fmt.Println(Mathematics)
+	fmt.Println("Mat:\n", Mathematics, "\nPhy:\n", Physics, "\nBio:\n", Biotech, "\nChe:\n", Chemistry, "\nEng:\n", Engineering)
 	fmt.Println()
 	fmt.Println(Students)
 }
