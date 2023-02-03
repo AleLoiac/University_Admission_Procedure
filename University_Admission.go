@@ -55,7 +55,7 @@ func fileToSlice(file *os.File) {
 	}
 }
 
-func sortStudents(students []Student) {
+func sortStudents(students []Student) []Student {
 	sort.Slice(students, func(i, j int) bool {
 		if students[i].GPA != students[j].GPA {
 			return students[i].GPA > students[j].GPA
@@ -64,6 +64,7 @@ func sortStudents(students []Student) {
 		}
 		return students[i].lastname < students[j].lastname
 	})
+	return students
 }
 
 func populateDep(department *[]Student, name string) {
@@ -110,7 +111,7 @@ func thirdRound(department *[]Student, name string) {
 
 func printDep(dep []Student) {
 	for _, v := range dep {
-		fmt.Print(v.firstName, " ", v.lastname, " ", v.GPA, "\n")
+		fmt.Printf("%v %v %.2f \n", v.firstName, v.lastname, v.GPA)
 	}
 	fmt.Println()
 }
@@ -157,13 +158,13 @@ func main() {
 	thirdRound(&Engineering, "Engineering")
 
 	fmt.Println("Biotech")
-	printDep(Biotech)
+	printDep(sortStudents(Biotech))
 	fmt.Println("Chemistry")
-	printDep(Chemistry)
+	printDep(sortStudents(Chemistry))
 	fmt.Println("Engineering")
-	printDep(Engineering)
+	printDep(sortStudents(Engineering))
 	fmt.Println("Mathematics")
-	printDep(Mathematics)
+	printDep(sortStudents(Mathematics))
 	fmt.Println("Physics")
-	printDep(Physics)
+	printDep(sortStudents(Physics))
 }
