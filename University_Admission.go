@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"sort"
-	"strconv"
 	"strings"
 )
 
@@ -14,20 +13,22 @@ var acceptedNumber int // the number of accepted students in each department
 
 var Students []Student
 
-var Mathematics []Student
-var Physics []Student
-var Biotech []Student
-var Chemistry []Student
-var Engineering []Student
-
 type Student struct {
 	firstName    string
 	lastname     string
-	GPA          float64
+	physics      string
+	chemistry    string
+	math         string
+	compScience  string
 	firstChoice  string
 	secondChoice string
 	thirdChoice  string
 	assigned     bool
+}
+
+type Department struct {
+	name     string
+	students []Student
 }
 
 func fileToSlice(file *os.File) {
@@ -39,35 +40,97 @@ func fileToSlice(file *os.File) {
 
 		var s Student
 
-		var err error
-
 		s.firstName = field[0]
 		s.lastname = field[1]
-		s.GPA, err = strconv.ParseFloat(field[2], 64)
-		if err != nil {
-			log.Fatal(err)
-		}
-		s.firstChoice = field[3]
-		s.secondChoice = field[4]
-		s.thirdChoice = field[5]
+		s.physics = field[2]
+		s.chemistry = field[3]
+		s.math = field[4]
+		s.compScience = field[5]
+		s.firstChoice = field[6]
+		s.secondChoice = field[7]
+		s.thirdChoice = field[8]
 
 		Students = append(Students, s)
 	}
 }
 
-func sortStudents(students []Student) []Student {
-	sort.Slice(students, func(i, j int) bool {
-		if students[i].GPA != students[j].GPA {
-			return students[i].GPA > students[j].GPA
-		} else if students[i].firstName != students[j].firstName {
-			return students[i].firstName < students[j].firstName
+//func sortStudents(students []Student) []Student {
+//	sort.Slice(students, func(i, j int) bool {
+//		if students[i].GPA != students[j].GPA {
+//			return students[i].GPA > students[j].GPA
+//		} else if students[i].firstName != students[j].firstName {
+//			return students[i].firstName < students[j].firstName
+//		}
+//		return students[i].lastname < students[j].lastname
+//	})
+//	return students
+//}
+
+//func secondRound(department *[]Student, name string) {
+//	count := len(*department)
+//	for i, v := range Students {
+//		if count == acceptedNumber {
+//			break
+//		} else if v.secondChoice == name && v.assigned != true {
+//			v.assigned = true
+//			Students[i].assigned = true
+//			*department = append(*department, v)
+//			count++
+//		}
+//	}
+//}
+
+//func thirdRound(department *[]Student, name string) {
+//	count := len(*department)
+//	for i, v := range Students {
+//		if count == acceptedNumber {
+//			break
+//		} else if v.thirdChoice == name && v.assigned != true {
+//			v.assigned = true
+//			Students[i].assigned = true
+//			*department = append(*department, v)
+//			count++
+//		}
+//	}
+//}
+
+//func printDep(dep []Student) {
+//	for _, v := range dep {
+//		fmt.Printf("%v %v %.2f \n", v.firstName, v.lastname, v.GPA)
+//	}
+//	fmt.Println()
+//}
+
+func sortForDep(dep Department, stud []Student) []Student {
+	sort.Slice(stud, func(i, j int) bool {
+		var x, y string
+		if dep.name == "Physics" {
+			x = stud[i].physics
+			y = stud[j].physics
+		} else if dep.name == "Biotech" {
+			x = stud[i].chemistry
+			y = stud[j].chemistry
+		} else if dep.name == "Chemistry" {
+			x = stud[i].chemistry
+			y = stud[j].chemistry
+		} else if dep.name == "Mathematics" {
+			x = stud[i].math
+			y = stud[j].math
+		} else if dep.name == "Engineering" {
+			x = stud[i].compScience
+			y = stud[j].compScience
 		}
-		return students[i].lastname < students[j].lastname
+		if x != y {
+			return x > y
+		} else if stud[i].firstName != stud[j].firstName {
+			return stud[i].firstName < stud[j].firstName
+		}
+		return stud[i].lastname < stud[j].lastname
 	})
-	return students
+	return stud
 }
 
-func populateDep(department *[]Student, name string) {
+func firstRound(department *[]Student, name string) {
 	count := 0
 	for i, v := range Students {
 		if count == acceptedNumber {
@@ -79,41 +142,6 @@ func populateDep(department *[]Student, name string) {
 			count++
 		}
 	}
-}
-
-func secondRound(department *[]Student, name string) {
-	count := len(*department)
-	for i, v := range Students {
-		if count == acceptedNumber {
-			break
-		} else if v.secondChoice == name && v.assigned != true {
-			v.assigned = true
-			Students[i].assigned = true
-			*department = append(*department, v)
-			count++
-		}
-	}
-}
-
-func thirdRound(department *[]Student, name string) {
-	count := len(*department)
-	for i, v := range Students {
-		if count == acceptedNumber {
-			break
-		} else if v.thirdChoice == name && v.assigned != true {
-			v.assigned = true
-			Students[i].assigned = true
-			*department = append(*department, v)
-			count++
-		}
-	}
-}
-
-func printDep(dep []Student) {
-	for _, v := range dep {
-		fmt.Printf("%v %v %.2f \n", v.firstName, v.lastname, v.GPA)
-	}
-	fmt.Println()
 }
 
 func main() {
@@ -131,40 +159,47 @@ func main() {
 
 	fileToSlice(file)
 
-	sortStudents(Students)
+	Biotech := Department{
+		name:     "Biotech",
+		students: make([]Student, 0),
+	}
+	Chemistry := Department{
+		name:     "Chemistry",
+		students: make([]Student, 0),
+	}
+	Engineering := Department{
+		name:     "Engineering",
+		students: make([]Student, 0),
+	}
+	Mathematics := Department{
+		name:     "Mathematics",
+		students: make([]Student, 0),
+	}
+	Physics := Department{
+		name:     "Physics",
+		students: make([]Student, 0),
+	}
 
-	//first round
-	Mathematics = make([]Student, 0)
-	populateDep(&Mathematics, "Mathematics")
-	Physics = make([]Student, 0)
-	populateDep(&Physics, "Physics")
-	Biotech = make([]Student, 0)
-	populateDep(&Biotech, "Biotech")
-	Chemistry = make([]Student, 0)
-	populateDep(&Chemistry, "Chemistry")
-	Engineering = make([]Student, 0)
-	populateDep(&Engineering, "Engineering")
+	sortForDep(Biotech, Students)
+	firstRound(&Biotech.students, "Biotech")
+	sortForDep(Chemistry, Students)
+	firstRound(&Chemistry.students, "Chemistry")
+	sortForDep(Engineering, Students)
+	firstRound(&Engineering.students, "Engineering")
+	sortForDep(Mathematics, Students)
+	firstRound(&Mathematics.students, "Mathematics")
+	sortForDep(Physics, Students)
+	firstRound(&Physics.students, "Physics")
 
-	secondRound(&Mathematics, "Mathematics")
-	secondRound(&Physics, "Physics")
-	secondRound(&Biotech, "Biotech")
-	secondRound(&Chemistry, "Chemistry")
-	secondRound(&Engineering, "Engineering")
-
-	thirdRound(&Mathematics, "Mathematics")
-	thirdRound(&Physics, "Physics")
-	thirdRound(&Biotech, "Biotech")
-	thirdRound(&Chemistry, "Chemistry")
-	thirdRound(&Engineering, "Engineering")
-
-	fmt.Println("Biotech")
-	printDep(sortStudents(Biotech))
-	fmt.Println("Chemistry")
-	printDep(sortStudents(Chemistry))
-	fmt.Println("Engineering")
-	printDep(sortStudents(Engineering))
-	fmt.Println("Mathematics")
-	printDep(sortStudents(Mathematics))
-	fmt.Println("Physics")
-	printDep(sortStudents(Physics))
+	fmt.Print(Biotech)
+	fmt.Println()
+	fmt.Print(Chemistry)
+	fmt.Println()
+	fmt.Print(Engineering)
+	fmt.Println()
+	fmt.Print(Mathematics)
+	fmt.Println()
+	fmt.Print(Physics)
+	fmt.Println()
+	fmt.Println(Students)
 }
