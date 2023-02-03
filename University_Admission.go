@@ -15,21 +15,45 @@ var acceptedNumber int // the number of accepted students in each department
 var Students []Student
 
 type Student struct {
-	firstName    string
-	lastname     string
-	physics      string
-	chemistry    string
-	math         string
-	compScience  string
-	firstChoice  string
-	secondChoice string
-	thirdChoice  string
-	assigned     bool
+	firstName       string
+	lastname        string
+	physics         string
+	chemistry       string
+	math            string
+	compScience     string
+	firstChoice     string
+	secondChoice    string
+	thirdChoice     string
+	assigned        bool
+	meanPhysics     string
+	meanEngineering string
+	meanBiotech     string
 }
 
 type Department struct {
 	name     string
 	students []Student
+}
+
+func meanPhy(student Student) string {
+	x, _ := strconv.ParseInt(student.physics, 10, 64)
+	y, _ := strconv.ParseInt(student.math, 10, 64)
+	meanValue := strconv.FormatFloat(float64(x+y)/2, 'f', 1, 64)
+	return meanValue
+}
+
+func meanEng(student Student) string {
+	x, _ := strconv.ParseInt(student.compScience, 10, 64)
+	y, _ := strconv.ParseInt(student.math, 10, 64)
+	meanValue := strconv.FormatFloat(float64(x+y)/2, 'f', 1, 64)
+	return meanValue
+}
+
+func meanBio(student Student) string {
+	x, _ := strconv.ParseInt(student.chemistry, 10, 64)
+	y, _ := strconv.ParseInt(student.physics, 10, 64)
+	meanValue := strconv.FormatFloat(float64(x+y)/2, 'f', 1, 64)
+	return meanValue
 }
 
 func fileToSlice(file *os.File) {
@@ -50,6 +74,9 @@ func fileToSlice(file *os.File) {
 		s.firstChoice = field[6]
 		s.secondChoice = field[7]
 		s.thirdChoice = field[8]
+		s.meanPhysics = meanPhy(s)
+		s.meanEngineering = meanEng(s)
+		s.meanBiotech = meanBio(s)
 
 		Students = append(Students, s)
 	}
@@ -59,11 +86,11 @@ func sortForDep(dep Department, stud []Student) []Student {
 	sort.Slice(stud, func(i, j int) bool {
 		var x, y string
 		if dep.name == "Physics" {
-			x = stud[i].physics
-			y = stud[j].physics
+			x = stud[i].meanPhysics
+			y = stud[j].meanPhysics
 		} else if dep.name == "Biotech" {
-			x = stud[i].chemistry
-			y = stud[j].chemistry
+			x = stud[i].meanBiotech
+			y = stud[j].meanBiotech
 		} else if dep.name == "Chemistry" {
 			x = stud[i].chemistry
 			y = stud[j].chemistry
@@ -71,8 +98,8 @@ func sortForDep(dep Department, stud []Student) []Student {
 			x = stud[i].math
 			y = stud[j].math
 		} else if dep.name == "Engineering" {
-			x = stud[i].compScience
-			y = stud[j].compScience
+			x = stud[i].meanEngineering
+			y = stud[j].meanEngineering
 		}
 		if x != y {
 			return x > y
@@ -131,15 +158,15 @@ func printDep(stud []Student, dep Department) {
 	for _, v := range stud {
 		switch {
 		case dep.name == "Biotech":
-			x, _ = strconv.ParseFloat(v.chemistry, 64)
+			x, _ = strconv.ParseFloat(v.meanBiotech, 64)
 		case dep.name == "Physics":
-			x, _ = strconv.ParseFloat(v.physics, 64)
+			x, _ = strconv.ParseFloat(v.meanPhysics, 64)
 		case dep.name == "Chemistry":
 			x, _ = strconv.ParseFloat(v.chemistry, 64)
 		case dep.name == "Mathematics":
 			x, _ = strconv.ParseFloat(v.math, 64)
 		case dep.name == "Engineering":
-			x, _ = strconv.ParseFloat(v.compScience, 64)
+			x, _ = strconv.ParseFloat(v.meanEngineering, 64)
 		}
 		fmt.Printf("%v %v %.1f \n", v.firstName, v.lastname, x)
 	}
@@ -220,19 +247,84 @@ func main() {
 	sortForDep(Physics, Students)
 	thirdRound(&Physics.students, "Physics")
 
-	fmt.Println("Biotech")
+	//fmt.Println("Biotech")
 	sortForDep(Biotech, Biotech.students)
-	printDep(Biotech.students, Biotech)
-	fmt.Println("Chemistry")
+	//printDep(Biotech.students, Biotech)
+	//fmt.Println("Chemistry")
 	sortForDep(Chemistry, Chemistry.students)
-	printDep(Chemistry.students, Chemistry)
-	fmt.Println("Engineering")
+	//printDep(Chemistry.students, Chemistry)
+	//fmt.Println("Engineering")
 	sortForDep(Engineering, Engineering.students)
-	printDep(Engineering.students, Engineering)
-	fmt.Println("Mathematics")
+	//printDep(Engineering.students, Engineering)
+	//fmt.Println("Mathematics")
 	sortForDep(Mathematics, Mathematics.students)
-	printDep(Mathematics.students, Mathematics)
-	fmt.Println("Physics")
+	//printDep(Mathematics.students, Mathematics)
+	//fmt.Println("Physics")
 	sortForDep(Physics, Physics.students)
-	printDep(Physics.students, Physics)
+	//printDep(Physics.students, Physics)
+
+	fileBiotech, err4 := os.Create("biotech.txt")
+	if err4 != nil {
+		log.Fatal(err4)
+	}
+	defer fileBiotech.Close()
+
+	for _, line := range Biotech.students {
+		_, err4 = fmt.Fprintln(fileBiotech, line.firstName, line.lastname, line.meanBiotech) // writes each line of the 'data' slice of strings
+		if err4 != nil {
+			log.Fatal(err4)
+		}
+	}
+
+	fileChemistry, err5 := os.Create("chemistry.txt")
+	if err5 != nil {
+		log.Fatal(err5)
+	}
+	defer fileChemistry.Close()
+
+	for _, line := range Chemistry.students {
+		_, err5 = fmt.Fprintln(fileChemistry, line.firstName, line.lastname, line.chemistry) // writes each line of the 'data' slice of strings
+		if err5 != nil {
+			log.Fatal(err5)
+		}
+	}
+
+	fileEngineering, err6 := os.Create("engineering.txt")
+	if err6 != nil {
+		log.Fatal(err6)
+	}
+	defer fileEngineering.Close()
+
+	for _, line := range Engineering.students {
+		_, err6 = fmt.Fprintln(fileEngineering, line.firstName, line.lastname, line.meanEngineering) // writes each line of the 'data' slice of strings
+		if err6 != nil {
+			log.Fatal(err6)
+		}
+	}
+
+	fileMathematics, err7 := os.Create("mathematics.txt")
+	if err7 != nil {
+		log.Fatal(err7)
+	}
+	defer fileMathematics.Close()
+
+	for _, line := range Mathematics.students {
+		_, err7 = fmt.Fprintln(fileMathematics, line.firstName, line.lastname, line.math) // writes each line of the 'data' slice of strings
+		if err7 != nil {
+			log.Fatal(err7)
+		}
+	}
+
+	filePhysics, err8 := os.Create("physics.txt")
+	if err8 != nil {
+		log.Fatal(err8)
+	}
+	defer filePhysics.Close()
+
+	for _, line := range Physics.students {
+		_, err8 = fmt.Fprintln(filePhysics, line.firstName, line.lastname, line.meanPhysics) // writes each line of the 'data' slice of strings
+		if err8 != nil {
+			log.Fatal(err8)
+		}
+	}
 }
