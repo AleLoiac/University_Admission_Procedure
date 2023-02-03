@@ -228,13 +228,18 @@ func main() {
 	thirdRound(&Physics.students, "Physics")
 
 	fmt.Println("Biotech")
+	sortForDep(Biotech, Students)
 	printDepChe(Biotech.students)
 	fmt.Println("Chemistry")
+	sortForDep(Chemistry, Students)
 	printDepChe(Chemistry.students)
 	fmt.Println("Engineering")
+	sortForDep(Engineering, Students)
 	printDepCs(Engineering.students)
 	fmt.Println("Mathematics")
+	sortForDep(Mathematics, Students)
 	printDepMat(Mathematics.students)
 	fmt.Println("Physics")
+	sortForDep(Physics, Students)
 	printDepPhy(Physics.students)
 }
