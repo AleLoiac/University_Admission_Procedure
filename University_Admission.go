@@ -55,38 +55,6 @@ func fileToSlice(file *os.File) {
 	}
 }
 
-func printDepPhy(dep []Student) {
-	for _, v := range dep {
-		x, _ := strconv.ParseFloat(v.physics, 64)
-		fmt.Printf("%v %v %.1f \n", v.firstName, v.lastname, x)
-	}
-	fmt.Println()
-}
-
-func printDepChe(dep []Student) {
-	for _, v := range dep {
-		x, _ := strconv.ParseFloat(v.chemistry, 64)
-		fmt.Printf("%v %v %.1f \n", v.firstName, v.lastname, x)
-	}
-	fmt.Println()
-}
-
-func printDepMat(dep []Student) {
-	for _, v := range dep {
-		x, _ := strconv.ParseFloat(v.math, 64)
-		fmt.Printf("%v %v %.1f \n", v.firstName, v.lastname, x)
-	}
-	fmt.Println()
-}
-
-func printDepCs(dep []Student) {
-	for _, v := range dep {
-		x, _ := strconv.ParseFloat(v.compScience, 64)
-		fmt.Printf("%v %v %.1f \n", v.firstName, v.lastname, x)
-	}
-	fmt.Println()
-}
-
 func sortForDep(dep Department, stud []Student) []Student {
 	sort.Slice(stud, func(i, j int) bool {
 		var x, y string
@@ -158,18 +126,43 @@ func thirdRound(department *[]Student, name string) {
 	}
 }
 
+func printDep(stud []Student, dep Department) {
+	var x float64
+	for _, v := range stud {
+		switch {
+		case dep.name == "Biotech":
+			x, _ = strconv.ParseFloat(v.chemistry, 64)
+		case dep.name == "Physics":
+			x, _ = strconv.ParseFloat(v.physics, 64)
+		case dep.name == "Chemistry":
+			x, _ = strconv.ParseFloat(v.chemistry, 64)
+		case dep.name == "Mathematics":
+			x, _ = strconv.ParseFloat(v.math, 64)
+		case dep.name == "Engineering":
+			x, _ = strconv.ParseFloat(v.compScience, 64)
+		}
+		fmt.Printf("%v %v %.1f \n", v.firstName, v.lastname, x)
+	}
+	fmt.Println()
+}
+
 func main() {
 
-	_, err2 := fmt.Scan(&acceptedNumber)
-	if err2 != nil {
+	_, err := fmt.Scan(&acceptedNumber)
+	if err != nil {
 		return
 	}
 
-	file, err := os.Open("applicant_list.txt")
-	if err != nil {
-		log.Fatal(err)
+	file, err2 := os.Open("applicant_list.txt")
+	if err2 != nil {
+		log.Fatal(err2)
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		err3 := file.Close()
+		if err3 != nil {
+
+		}
+	}(file)
 
 	fileToSlice(file)
 
@@ -229,17 +222,17 @@ func main() {
 
 	fmt.Println("Biotech")
 	sortForDep(Biotech, Biotech.students)
-	printDepChe(Biotech.students)
+	printDep(Biotech.students, Biotech)
 	fmt.Println("Chemistry")
 	sortForDep(Chemistry, Chemistry.students)
-	printDepChe(Chemistry.students)
+	printDep(Chemistry.students, Chemistry)
 	fmt.Println("Engineering")
 	sortForDep(Engineering, Engineering.students)
-	printDepCs(Engineering.students)
+	printDep(Engineering.students, Engineering)
 	fmt.Println("Mathematics")
 	sortForDep(Mathematics, Mathematics.students)
-	printDepMat(Mathematics.students)
+	printDep(Mathematics.students, Mathematics)
 	fmt.Println("Physics")
 	sortForDep(Physics, Physics.students)
-	printDepPhy(Physics.students)
+	printDep(Physics.students, Physics)
 }
