@@ -15,6 +15,10 @@ var acceptedNumber int // the number of accepted students in each department
 var Students []Student
 
 var Mathematics []Student
+var Physics []Student
+var Biotech []Student
+var Chemistry []Student
+var Engineering []Student
 
 type Student struct {
 	firstName    string
@@ -50,6 +54,19 @@ func fileToSlice(file *os.File) {
 	}
 }
 
+func populateDep(department []Student, name string) {
+	count := 0
+	for i, v := range Students {
+		if count == acceptedNumber {
+			break
+		} else if v.firstChoice == name {
+			department = append(department, v)
+			Students = append(Students[:i], Students[i+1:]...) //removes the student from the Students slice
+			count++
+		}
+	}
+}
+
 func sortStudents(students []Student) {
 	sort.Slice(students, func(i, j int) bool {
 		if students[i].GPA != students[j].GPA {
@@ -80,16 +97,28 @@ func main() {
 
 	Mathematics = make([]Student, 0)
 
-	count := 0
-	for i, v := range Students {
-		if count == acceptedNumber {
-			break
-		} else if v.firstChoice == "Mathematics" {
-			Mathematics = append(Mathematics, v)
-			Students = append(Students[:i], Students[i+1:]...) //removes the student from the Students slice
-			count++
-		}
-	}
+	//count := 0
+	//for i, v := range Students {
+	//	if count == acceptedNumber {
+	//		break
+	//	} else if v.firstChoice == "Mathematics" {
+	//		Mathematics = append(Mathematics, v)
+	//		Students = append(Students[:i], Students[i+1:]...) //removes the student from the Students slice
+	//		count++
+	//	}
+	//}
+
+	populateDep(Mathematics, "Mathematics")
+	//Physics = make([]Student, 0)
+	//populateDep(Physics)
+	//Biotech = make([]Student, 0)
+	//populateDep(Biotech)
+	//Chemistry = make([]Student, 0)
+	//populateDep(Chemistry)
+	//Engineering = make([]Student, 0)
+	//populateDep(Engineering)
+
+	//fmt.Println("Mat:\n", Mathematics, "Phy:\n", Physics, "Bio:\n", Biotech, "Che:\n", Chemistry, "Eng:\n", Engineering)
 	fmt.Println(Mathematics)
 	fmt.Println()
 	fmt.Println(Students)
