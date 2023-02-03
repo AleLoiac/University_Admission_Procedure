@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-var acceptedNumber int
+var acceptedNumber int // the number of accepted students in each department
 
 var Students []Student
 
@@ -25,14 +25,29 @@ type Student struct {
 	thirdChoice  string
 }
 
-func newStudent(firstname string, lastname string, gpa float64, first string, second string, third string) Student {
-	s := Student{firstName: firstname}
-	s.lastname = lastname
-	s.GPA = gpa
-	s.firstChoice = first
-	s.secondChoice = second
-	s.thirdChoice = third
-	return s
+func fileToSlice(file *os.File) {
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	for scanner.Scan() {
+
+		field := strings.Split(scanner.Text(), " ")
+
+		var s Student
+
+		var err error
+
+		s.firstName = field[0]
+		s.lastname = field[1]
+		s.GPA, err = strconv.ParseFloat(field[2], 64)
+		if err != nil {
+			log.Fatal(err)
+		}
+		s.firstChoice = field[3]
+		s.secondChoice = field[4]
+		s.thirdChoice = field[5]
+
+		Students = append(Students, s)
+	}
 }
 
 func sortStudents(students []Student) {
@@ -59,25 +74,7 @@ func main() {
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-	for scanner.Scan() {
-
-		field := strings.Split(scanner.Text(), " ")
-
-		var s Student
-
-		s.firstName = field[0]
-		s.lastname = field[1]
-		s.GPA, err = strconv.ParseFloat(field[2], 64)
-		s.firstChoice = field[3]
-		s.secondChoice = field[4]
-		s.thirdChoice = field[5]
-
-		//fmt.Scan(fields[1], &s.lastname)
-		//fmt.Scan(fields[2], &s.GPA)
-		Students = append(Students, s)
-	}
+	fileToSlice(file)
 
 	sortStudents(Students)
 
