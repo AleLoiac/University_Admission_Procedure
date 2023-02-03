@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -54,52 +55,37 @@ func fileToSlice(file *os.File) {
 	}
 }
 
-//func sortStudents(students []Student) []Student {
-//	sort.Slice(students, func(i, j int) bool {
-//		if students[i].GPA != students[j].GPA {
-//			return students[i].GPA > students[j].GPA
-//		} else if students[i].firstName != students[j].firstName {
-//			return students[i].firstName < students[j].firstName
-//		}
-//		return students[i].lastname < students[j].lastname
-//	})
-//	return students
-//}
+func printDepPhy(dep []Student) {
+	for _, v := range dep {
+		x, _ := strconv.ParseFloat(v.physics, 64)
+		fmt.Printf("%v %v %.1f \n", v.firstName, v.lastname, x)
+	}
+	fmt.Println()
+}
 
-//func secondRound(department *[]Student, name string) {
-//	count := len(*department)
-//	for i, v := range Students {
-//		if count == acceptedNumber {
-//			break
-//		} else if v.secondChoice == name && v.assigned != true {
-//			v.assigned = true
-//			Students[i].assigned = true
-//			*department = append(*department, v)
-//			count++
-//		}
-//	}
-//}
+func printDepChe(dep []Student) {
+	for _, v := range dep {
+		x, _ := strconv.ParseFloat(v.chemistry, 64)
+		fmt.Printf("%v %v %.1f \n", v.firstName, v.lastname, x)
+	}
+	fmt.Println()
+}
 
-//func thirdRound(department *[]Student, name string) {
-//	count := len(*department)
-//	for i, v := range Students {
-//		if count == acceptedNumber {
-//			break
-//		} else if v.thirdChoice == name && v.assigned != true {
-//			v.assigned = true
-//			Students[i].assigned = true
-//			*department = append(*department, v)
-//			count++
-//		}
-//	}
-//}
+func printDepMat(dep []Student) {
+	for _, v := range dep {
+		x, _ := strconv.ParseFloat(v.math, 64)
+		fmt.Printf("%v %v %.1f \n", v.firstName, v.lastname, x)
+	}
+	fmt.Println()
+}
 
-//func printDep(dep []Student) {
-//	for _, v := range dep {
-//		fmt.Printf("%v %v %.2f \n", v.firstName, v.lastname, v.GPA)
-//	}
-//	fmt.Println()
-//}
+func printDepCs(dep []Student) {
+	for _, v := range dep {
+		x, _ := strconv.ParseFloat(v.compScience, 64)
+		fmt.Printf("%v %v %.1f \n", v.firstName, v.lastname, x)
+	}
+	fmt.Println()
+}
 
 func sortForDep(dep Department, stud []Student) []Student {
 	sort.Slice(stud, func(i, j int) bool {
@@ -136,6 +122,34 @@ func firstRound(department *[]Student, name string) {
 		if count == acceptedNumber {
 			break
 		} else if v.firstChoice == name && v.assigned != true {
+			v.assigned = true
+			Students[i].assigned = true
+			*department = append(*department, v)
+			count++
+		}
+	}
+}
+
+func secondRound(department *[]Student, name string) {
+	count := len(*department)
+	for i, v := range Students {
+		if count == acceptedNumber {
+			break
+		} else if v.secondChoice == name && v.assigned != true {
+			v.assigned = true
+			Students[i].assigned = true
+			*department = append(*department, v)
+			count++
+		}
+	}
+}
+
+func thirdRound(department *[]Student, name string) {
+	count := len(*department)
+	for i, v := range Students {
+		if count == acceptedNumber {
+			break
+		} else if v.thirdChoice == name && v.assigned != true {
 			v.assigned = true
 			Students[i].assigned = true
 			*department = append(*department, v)
@@ -191,15 +205,36 @@ func main() {
 	sortForDep(Physics, Students)
 	firstRound(&Physics.students, "Physics")
 
-	fmt.Print(Biotech)
-	fmt.Println()
-	fmt.Print(Chemistry)
-	fmt.Println()
-	fmt.Print(Engineering)
-	fmt.Println()
-	fmt.Print(Mathematics)
-	fmt.Println()
-	fmt.Print(Physics)
-	fmt.Println()
-	fmt.Println(Students)
+	sortForDep(Biotech, Students)
+	secondRound(&Biotech.students, "Biotech")
+	sortForDep(Chemistry, Students)
+	secondRound(&Chemistry.students, "Chemistry")
+	sortForDep(Engineering, Students)
+	secondRound(&Engineering.students, "Engineering")
+	sortForDep(Mathematics, Students)
+	secondRound(&Mathematics.students, "Mathematics")
+	sortForDep(Physics, Students)
+	secondRound(&Physics.students, "Physics")
+
+	sortForDep(Biotech, Students)
+	thirdRound(&Biotech.students, "Biotech")
+	sortForDep(Chemistry, Students)
+	thirdRound(&Chemistry.students, "Chemistry")
+	sortForDep(Engineering, Students)
+	thirdRound(&Engineering.students, "Engineering")
+	sortForDep(Mathematics, Students)
+	thirdRound(&Mathematics.students, "Mathematics")
+	sortForDep(Physics, Students)
+	thirdRound(&Physics.students, "Physics")
+
+	fmt.Println("Biotech")
+	printDepChe(Biotech.students)
+	fmt.Println("Chemistry")
+	printDepChe(Chemistry.students)
+	fmt.Println("Engineering")
+	printDepCs(Engineering.students)
+	fmt.Println("Mathematics")
+	printDepMat(Mathematics.students)
+	fmt.Println("Physics")
+	printDepPhy(Physics.students)
 }
