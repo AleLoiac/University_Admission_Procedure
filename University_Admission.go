@@ -21,6 +21,7 @@ type Student struct {
 	chemistry       string
 	math            string
 	compScience     string
+	exam            string
 	firstChoice     string
 	secondChoice    string
 	thirdChoice     string
@@ -36,23 +37,23 @@ type Department struct {
 }
 
 func meanPhy(student Student) string {
-	x, _ := strconv.ParseInt(student.physics, 10, 64)
-	y, _ := strconv.ParseInt(student.math, 10, 64)
-	meanValue := strconv.FormatFloat(float64(x+y)/2, 'f', 1, 64)
+	x, _ := strconv.ParseFloat(student.physics, 64)
+	y, _ := strconv.ParseFloat(student.math, 64)
+	meanValue := strconv.FormatFloat((x+y)/2, 'f', 1, 64)
 	return meanValue
 }
 
 func meanEng(student Student) string {
-	x, _ := strconv.ParseInt(student.compScience, 10, 64)
-	y, _ := strconv.ParseInt(student.math, 10, 64)
-	meanValue := strconv.FormatFloat(float64(x+y)/2, 'f', 1, 64)
+	x, _ := strconv.ParseFloat(student.compScience, 64)
+	y, _ := strconv.ParseFloat(student.math, 64)
+	meanValue := strconv.FormatFloat((x+y)/2, 'f', 1, 64)
 	return meanValue
 }
 
 func meanBio(student Student) string {
-	x, _ := strconv.ParseInt(student.chemistry, 10, 64)
-	y, _ := strconv.ParseInt(student.physics, 10, 64)
-	meanValue := strconv.FormatFloat(float64(x+y)/2, 'f', 1, 64)
+	x, _ := strconv.ParseFloat(student.chemistry, 64)
+	y, _ := strconv.ParseFloat(student.physics, 64)
+	meanValue := strconv.FormatFloat((x+y)/2, 'f', 1, 64)
 	return meanValue
 }
 
@@ -67,18 +68,53 @@ func fileToSlice(file *os.File) {
 
 		s.firstName = field[0]
 		s.lastname = field[1]
-		s.physics = field[2]
-		s.chemistry = field[3]
-		s.math = field[4]
-		s.compScience = field[5]
-		s.firstChoice = field[6]
-		s.secondChoice = field[7]
-		s.thirdChoice = field[8]
+		//phyx, _ := strconv.ParseInt(field[2], 10, 64)
+		//phy := strconv.FormatFloat(float64(phyx), 'f', 1, 64)
+		s.physics = field[2] + ".0"
+		//chex, _ := strconv.ParseInt(field[3], 10, 64)
+		//che := strconv.FormatFloat(float64(chex), 'f', 1, 64)
+		s.chemistry = field[3] + ".0"
+		//matx, _ := strconv.ParseInt(field[4], 10, 64)
+		//mat := strconv.FormatFloat(float64(matx), 'f', 1, 64)
+		s.math = field[4] + ".0"
+		//comx, _ := strconv.ParseInt(field[5], 10, 64)
+		//com := strconv.FormatFloat(float64(comx), 'f', 1, 64)
+		s.compScience = field[5] + ".0"
+		//exax, _ := strconv.ParseInt(field[6], 10, 64)
+		//exa := strconv.FormatFloat(float64(exax), 'f', 1, 64)
+		s.exam = field[6] + ".0"
+		s.firstChoice = field[7]
+		s.secondChoice = field[8]
+		s.thirdChoice = field[9]
 		s.meanPhysics = meanPhy(s)
 		s.meanEngineering = meanEng(s)
 		s.meanBiotech = meanBio(s)
 
 		Students = append(Students, s)
+	}
+
+	for i, v := range Students {
+		if v.physics < v.exam {
+			Students[i].physics = Students[i].exam
+		}
+		if v.chemistry < v.exam {
+			Students[i].chemistry = Students[i].exam
+		}
+		if v.math < v.exam {
+			Students[i].math = Students[i].exam
+		}
+		if v.compScience < v.exam {
+			Students[i].physics = Students[i].exam
+		}
+		if v.meanPhysics < v.exam {
+			Students[i].meanPhysics = Students[i].exam
+		}
+		if v.meanEngineering < v.exam {
+			Students[i].meanEngineering = Students[i].exam
+		}
+		if v.meanBiotech < v.exam {
+			Students[i].meanBiotech = Students[i].exam
+		}
 	}
 }
 
@@ -213,6 +249,8 @@ func main() {
 		name:     "Physics",
 		students: make([]Student, 0),
 	}
+
+	fmt.Println(Students)
 
 	sortForDep(Biotech, Students)
 	firstRound(&Biotech.students, "Biotech")
