@@ -68,20 +68,10 @@ func fileToSlice(file *os.File) {
 
 		s.firstName = field[0]
 		s.lastname = field[1]
-		//phyx, _ := strconv.ParseInt(field[2], 10, 64)
-		//phy := strconv.FormatFloat(float64(phyx), 'f', 1, 64)
 		s.physics = field[2] + ".0"
-		//chex, _ := strconv.ParseInt(field[3], 10, 64)
-		//che := strconv.FormatFloat(float64(chex), 'f', 1, 64)
 		s.chemistry = field[3] + ".0"
-		//matx, _ := strconv.ParseInt(field[4], 10, 64)
-		//mat := strconv.FormatFloat(float64(matx), 'f', 1, 64)
 		s.math = field[4] + ".0"
-		//comx, _ := strconv.ParseInt(field[5], 10, 64)
-		//com := strconv.FormatFloat(float64(comx), 'f', 1, 64)
 		s.compScience = field[5] + ".0"
-		//exax, _ := strconv.ParseInt(field[6], 10, 64)
-		//exa := strconv.FormatFloat(float64(exax), 'f', 1, 64)
 		s.exam = field[6] + ".0"
 		s.firstChoice = field[7]
 		s.secondChoice = field[8]
@@ -285,21 +275,12 @@ func main() {
 	sortForDep(Physics, Students)
 	thirdRound(&Physics.students, "Physics")
 
-	//fmt.Println("Biotech")
+	//sort output
 	sortForDep(Biotech, Biotech.students)
-	//printDep(Biotech.students, Biotech)
-	//fmt.Println("Chemistry")
 	sortForDep(Chemistry, Chemistry.students)
-	//printDep(Chemistry.students, Chemistry)
-	//fmt.Println("Engineering")
 	sortForDep(Engineering, Engineering.students)
-	//printDep(Engineering.students, Engineering)
-	//fmt.Println("Mathematics")
 	sortForDep(Mathematics, Mathematics.students)
-	//printDep(Mathematics.students, Mathematics)
-	//fmt.Println("Physics")
 	sortForDep(Physics, Physics.students)
-	//printDep(Physics.students, Physics)
 
 	fileBiotech, err4 := os.Create("biotech.txt")
 	if err4 != nil {
